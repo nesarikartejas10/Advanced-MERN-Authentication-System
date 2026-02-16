@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      defaut: false,
+      default: false,
     },
     isLoggedIn: {
       type: Boolean,
