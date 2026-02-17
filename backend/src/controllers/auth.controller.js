@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { verifyMail } from "../utils/verifyMail.js";
 import { config } from "../config/envconfig.js";
+import { Session } from "../models/session.model.js";
 
 export const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -36,7 +37,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
   newUser.token = token;
   await newUser.save();
 
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     message: "User registered successfully",
     user: newUser,
@@ -72,7 +73,7 @@ export const emailVerification = asyncHandler(async (req, res, next) => {
   user.isVerified = true;
   await user.save();
 
-  res
+  return res
     .status(200)
     .json({ success: true, message: "Email verified successfully" });
 });
@@ -84,7 +85,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
     return next(createHttpError(400, "All fields are requied"));
   }
 
-  const user = await User.fineOne({ email });
+  const user = await User.findOne({ email });
   if (!user) {
     return next(createHttpError(404, "User not found"));
   }
@@ -97,7 +98,34 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   }
 
   //check if user is verified or not
-  if (!user.isVerfied) {
+  if (!user.isVerified) {
     return next(createHttpError(403, "Please verify your email to continue"));
   }
+
+  //check session exist
+  const existingSession = await Session.findOne({ userId: user._id });
+  if (existingSession) {
+    await Session.deleteOne({ userId: user._id });
+  }
+
+  await Session.create({ userId: user._id });
+
+  //generate tokens
+  const accessToken = jwt.sign({ id: user._id }, config.jwtSecret, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ id: user._id }, config.jwtSecret, {
+    expiresIn: "7d",
+  });
+
+  user.isLoggedIn = true;
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "User logged in successfully",
+    accessToken,
+    refreshToken,
+    user,
+  });
 });
