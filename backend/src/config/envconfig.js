@@ -5,6 +5,9 @@ const _config = {
   port: process.env.PORT,
   mongoURI: process.env.MONGO_URI,
   env: process.env.NODE_ENV,
+  mailUser: process.env.MAIL_USER,
+  mailPass: process.env.MAIL_PASS,
+  jwtSecret: process.env.JWT_SECRET,
 };
 
 export const config = Object.freeze(_config);
