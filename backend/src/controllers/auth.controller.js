@@ -76,3 +76,28 @@ export const emailVerification = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "Email verified successfully" });
 });
+
+export const loginUser = asyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(createHttpError(400, "All fields are requied"));
+  }
+
+  const user = await User.fineOne({ email });
+  if (!user) {
+    return next(createHttpError(404, "User not found"));
+  }
+
+  //check if password is correct or not
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  if (!isMatch) {
+    return next(createHttpError(401, "Incorrect password"));
+  }
+
+  //check if user is verified or not
+  if (!user.isVerfied) {
+    return next(createHttpError(403, "Please verify your email to continue"));
+  }
+});
