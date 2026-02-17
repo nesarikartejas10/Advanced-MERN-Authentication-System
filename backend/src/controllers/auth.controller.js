@@ -129,3 +129,12 @@ export const loginUser = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+
+export const logoutUser = asyncHandler(async (req, res, next) => {
+  const userId = req.userId;
+  await Session.deleteMany({ userId });
+  await User.findByIdAndUpdate(userId, { isLoggedIn: false });
+  return res
+    .status(200)
+    .json({ success: true, message: "Logged out successfully" });
+});
