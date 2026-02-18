@@ -204,3 +204,29 @@ export const verifyOTP = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "OTP verified successfully" });
 });
+
+export const changePassword = asyncHandler(async (req, res, next) => {
+  const { newPassword, confirmPassword } = req.body;
+  const { email } = req.params;
+
+  if (!newPassword || !confirmPassword) {
+    return next(createHttpError(400, "All fields are required"));
+  }
+
+  if (newPassword !== confirmPassword) {
+    return next(createHttpError(400, "Password do not match"));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(createHttpError(404, "User not found"));
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  await user.save();
+
+  return res
+    .status(200)
+    .json({ success: true, message: "Password changed successsfully" });
+});
