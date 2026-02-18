@@ -22,7 +22,8 @@
     "http-errors": "^2.0.1",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.1",
-    "nodemailer": "^8.0.1"
+    "nodemailer": "^8.0.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
