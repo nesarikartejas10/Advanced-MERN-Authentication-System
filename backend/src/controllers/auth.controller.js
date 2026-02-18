@@ -168,3 +168,39 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ success: true, message: "OTP sent to email successfully" });
 });
+
+export const verifyOTP = asyncHandler(async (req, res, next) => {
+  const { otp } = req.body;
+  const { email } = req.params;
+
+  if (!otp) {
+    return next(createHttpError(400, "Please enter OTP"));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(createHttpError(404, "User not found"));
+  }
+
+  if (!user.otp || !user.otpExpiry) {
+    return next(createHttpError(400, "OTP not generated or already verified"));
+  }
+
+  if (user.otpExpiry < new Date()) {
+    return next(
+      createHttpError(400, "OTP has been expired. Please request a new one"),
+    );
+  }
+
+  if (otp !== user.otp) {
+    return next(createHttpError(400, "Invalid OTP"));
+  }
+
+  user.otp = null;
+  user.otpExpiry = null;
+  await user.save();
+
+  return res
+    .status(200)
+    .json({ success: true, message: "OTP verified successfully" });
+});
