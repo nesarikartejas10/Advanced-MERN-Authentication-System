@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { verifyMail } from "../utils/verifyMail.js";
 import { config } from "../config/envconfig.js";
 import { Session } from "../models/session.model.js";
+import crypto from "crypto";
 
 export const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -137,4 +138,25 @@ export const logoutUser = asyncHandler(async (req, res, next) => {
   return res
     .status(200)
     .json({ success: true, message: "Logged out successfully" });
+});
+
+export const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return next(createHttpError(400, "Email is required"));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(createHttpError(404, "User not found"));
+  }
+
+  //generate otp
+  const otp = crypto.randomInt(100000, 10000000).toString();
+  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+
+  user.otp = otp;
+  user.otpExpiry = otpExpiry;
+  await user.save();
 });
