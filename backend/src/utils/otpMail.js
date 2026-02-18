@@ -8,15 +8,14 @@ import handlebars from "handlebars";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const verifyMail = async (token, email, name) => {
+export const sendOtpMail = async (name, email, otp) => {
   const emailTemplateSource = fs.readFileSync(
-    path.join(__dirname, "../views/emailTemplate.hbs"),
+    path.join(__dirname, "../views/otpMailTemplate.hbs"),
     "utf-8",
   );
 
   const template = handlebars.compile(emailTemplateSource);
-  const htmlToSend = template({ token: encodeURIComponent(token), name });
-
+  const htmlToSend = template({ name, otp });
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -25,17 +24,17 @@ export const verifyMail = async (token, email, name) => {
     },
   });
 
-  const mailConfigs = {
+  const mailOptions = {
     from: config.mailUser,
     to: email,
-    subject: "Email verification",
+    subject: "Password reset OTP",
     html: htmlToSend,
   };
 
-  transporter.sendMail(mailConfigs, (error, info) => {
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log("Error while sending mail", error.message);
+      console.log("Error while sending otp mail", error.message);
     }
-    console.log("Email sent successfully:", info);
+    console.log("OTP email sent successfully:", info);
   });
 };

@@ -7,6 +7,7 @@ import { verifyMail } from "../utils/verifyMail.js";
 import { config } from "../config/envconfig.js";
 import { Session } from "../models/session.model.js";
 import crypto from "crypto";
+import { sendOtpMail } from "../utils/otpMail.js";
 
 export const registerUser = asyncHandler(async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -33,7 +34,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     expiresIn: "10m",
   });
 
-  await verifyMail(token, email);
+  await verifyMail(token, email, username);
 
   newUser.token = token;
   await newUser.save();
@@ -153,10 +154,17 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
   }
 
   //generate otp
-  const otp = crypto.randomInt(100000, 10000000).toString();
-  const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+  const otp = crypto.randomInt(100000, 1000000).toString();
+  const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
   user.otp = otp;
   user.otpExpiry = otpExpiry;
   await user.save();
+
+  //send otp to mail
+  await sendOtpMail(user.username, email, otp);
+
+  return res
+    .status(200)
+    .json({ success: true, message: "OTP sent to email successfully" });
 });
