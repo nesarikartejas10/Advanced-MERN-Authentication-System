@@ -1,34 +1,8 @@
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import HomePage from "./pages/HomePage";
-import SignupPage from "./pages/auth/SignupPage";
-import LoginPage from "./pages/auth/LoginPage";
-import EmailVerificationInfoPage from "./pages/auth/EmailVerificationInfoPage";
-import EmailVerifiedPage from "./pages/auth/EmailVerifiedPage";
+import { RouterProvider } from "react-router";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/signup",
-    element: <SignupPage />,
-  },
-  {
-    path: "/email-sent",
-    element: <EmailVerificationInfoPage />,
-  },
-  {
-    path: "/verify/:token",
-    element: <EmailVerifiedPage />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-]);
+import router from "./routes/AppRoutes";
 
 const App = () => {
   return (
