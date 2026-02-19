@@ -37,7 +37,10 @@ const EmailVerifiedPage = () => {
     } catch (error) {
       setSuccess(false);
       setStatus("❌ Verification Failed.Please try again");
-      toast.error(`❌ ${error?.response?.data?.message}`);
+      toast.error(`${error?.response?.data?.message}`);
+      setTimeout(() => {
+        navigate("/signup");
+      }, 3000);
     }
   };
 
@@ -45,9 +48,9 @@ const EmailVerifiedPage = () => {
     <div className="relative w-full overflow-hidden">
       <div className="min-h-screen flex items-center justify-center px-4 bg-[url('/bg-img.jpg')] bg-no-repeat bg-center bg-cover">
         <div className="w-full max-w-md p-8 text-center bg-white shadow-lg rounded-2xl">
-          <h2 className="mb-4 text-2xl font-semibold text-cyan-700">
+          <h3 className="mb-4 text-2xl font-semibold text-cyan-700">
             {status}
-          </h2>
+          </h3>
           {success ? (
             <p className="text-sm text-gray-700">
               Your email has been successfully verified. You can now log in to

@@ -35,9 +35,6 @@ const SignupForm = () => {
         toast.success(response?.data?.message);
       }
     } catch (error) {
-      if (error?.response) {
-        toast.error(error.response?.data?.message);
-      }
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +56,6 @@ const SignupForm = () => {
             type="text"
             name="username"
             placeholder="John Doe"
-            required
             value={formData.username}
             onChange={handleInputChange}
           />
@@ -74,7 +70,6 @@ const SignupForm = () => {
             type="email"
             name="email"
             placeholder="johndoe@gmail.com"
-            required
             value={formData.email}
             onChange={handleInputChange}
           />
@@ -89,8 +84,7 @@ const SignupForm = () => {
               id="password"
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="********"
-              required
+              placeholder="Enter Your Password"
               value={formData.password}
               onChange={handleInputChange}
             />

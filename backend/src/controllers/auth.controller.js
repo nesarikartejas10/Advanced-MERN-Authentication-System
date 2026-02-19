@@ -125,7 +125,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
 
   return res.status(200).json({
     success: true,
-    message: "User logged in successfully",
+    message: `Welcome back ${user.username}`,
     accessToken,
     refreshToken,
     user,
