@@ -9,11 +9,31 @@ import {
 } from "flowbite-react";
 import { SiFsecure } from "react-icons/si";
 import { Link, useNavigate } from "react-router";
+import { getData } from "../context/UserContext";
+import api from "../api/axios";
 
 const NavigationBar = () => {
-  const isAuthenticated = true;
-
+  const { user, setUser } = getData();
   const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    try {
+      const response = await api.post(
+        "/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+          },
+        },
+      );
+      if (response?.data?.success) {
+        setUser(null);
+        localStorage.clear();
+        navigate("/login");
+      }
+    } catch (error) {}
+  };
   return (
     <Navbar fluid rounded>
       <NavbarBrand href="https://flowbite-react.com">
@@ -23,7 +43,7 @@ const NavigationBar = () => {
         </span>
       </NavbarBrand>
       <div className="flex md:order-2">
-        {isAuthenticated ? (
+        {user ? (
           <>
             <Dropdown
               arrowIcon={false}
@@ -38,14 +58,14 @@ const NavigationBar = () => {
             >
               <DropdownHeader className="flex flex-col justify-center gap-4">
                 <div>
-                  <span className="block text-sm">Tejas Nesarikar</span>
+                  <span className="block text-sm">{user.username}</span>
                   <span className="block text-sm font-medium truncate">
-                    tejas.nesarikar17@gmail.com
+                    {user.email}
                   </span>
                 </div>
 
                 <Link
-                  onClick={() => navigate("/login")}
+                  onClick={logoutHandler}
                   className="px-4 py-2 ml-auto text-center text-white transition-colors duration-300 rounded-md bg-cyan-600 hover:bg-cyan-700 w-28"
                 >
                   Logout

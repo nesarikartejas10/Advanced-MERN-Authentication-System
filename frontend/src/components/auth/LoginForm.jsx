@@ -34,6 +34,7 @@ const LoginForm = () => {
       if (response?.data?.success) {
         navigate("/");
         setUser(response?.data?.user);
+        localStorage.setItem("accesstoken", response?.data?.accessToken);
         toast.success(response?.data?.message);
       }
     } catch (error) {
