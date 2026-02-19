@@ -7,8 +7,10 @@ import { Link, useNavigate } from "react-router";
 import { IoEyeOff } from "react-icons/io5";
 import { IoEye } from "react-icons/io5";
 import { RiLoader2Line } from "react-icons/ri";
+import { getData } from "../../context/UserContext";
 
 const LoginForm = () => {
+  const { setUser } = getData();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,6 +33,7 @@ const LoginForm = () => {
       const response = await api.post("/auth/login", formData);
       if (response?.data?.success) {
         navigate("/");
+        setUser(response?.data?.user);
         toast.success(response?.data?.message);
       }
     } catch (error) {
