@@ -8,6 +8,7 @@ const _config = {
   mailUser: process.env.MAIL_USER,
   mailPass: process.env.MAIL_PASS,
   jwtSecret: process.env.JWT_SECRET,
+  frontendURL: process.env.FRONTEND_URL,
 };
 
 export const config = Object.freeze(_config);

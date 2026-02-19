@@ -1,14 +1,44 @@
 import { Button, Label, TextInput } from "flowbite-react";
 import { SiGnuprivacyguard } from "react-icons/si";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { IoEyeOff } from "react-icons/io5";
 import { IoEye } from "react-icons/io5";
 import { RiLoader2Line } from "react-icons/ri";
 import { useState } from "react";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
 
 const SignupForm = () => {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+
+    try {
+      setIsLoading(true);
+      const response = await api.post("/auth/register", formData);
+      if (response?.data?.success) {
+        navigate("/login");
+        toast.success(response?.data?.message);
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <div className="flex flex-col items-center gap-2">
@@ -16,7 +46,7 @@ const SignupForm = () => {
         <h1 className="text-2xl font-bold mb-10">Create Your Account</h1>
       </div>
 
-      <form className="flex max-w-md flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-4">
         <div>
           <div className="mb-2 block">
             <Label htmlFor="fullname">Full Name</Label>
@@ -27,6 +57,8 @@ const SignupForm = () => {
             name="username"
             placeholder="John Doe"
             required
+            value={formData.username}
+            onChange={handleInputChange}
           />
         </div>
 
@@ -40,6 +72,8 @@ const SignupForm = () => {
             name="email"
             placeholder="johndoe@gmail.com"
             required
+            value={formData.email}
+            onChange={handleInputChange}
           />
         </div>
 
@@ -54,6 +88,8 @@ const SignupForm = () => {
               name="password"
               placeholder="********"
               required
+              value={formData.password}
+              onChange={handleInputChange}
             />
             {showPassword ? (
               <IoEye
