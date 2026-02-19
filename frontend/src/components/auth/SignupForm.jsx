@@ -31,10 +31,13 @@ const SignupForm = () => {
       setIsLoading(true);
       const response = await api.post("/auth/register", formData);
       if (response?.data?.success) {
-        navigate("/login");
+        navigate("/email-sent");
         toast.success(response?.data?.message);
       }
     } catch (error) {
+      if (error?.response) {
+        toast.error(error.response?.data?.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -43,12 +46,12 @@ const SignupForm = () => {
     <>
       <div className="flex flex-col items-center gap-2">
         <SiGnuprivacyguard className="text-5xl" />
-        <h1 className="text-2xl font-bold mb-10">Create Your Account</h1>
+        <h1 className="mb-10 text-2xl font-bold">Create Your Account</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col max-w-md gap-4">
         <div>
-          <div className="mb-2 block">
+          <div className="block mb-2">
             <Label htmlFor="fullname">Full Name</Label>
           </div>
           <TextInput
@@ -63,7 +66,7 @@ const SignupForm = () => {
         </div>
 
         <div>
-          <div className="mb-2 block">
+          <div className="block mb-2">
             <Label htmlFor="email">Email</Label>
           </div>
           <TextInput
@@ -78,7 +81,7 @@ const SignupForm = () => {
         </div>
 
         <div>
-          <div className="mb-2 block">
+          <div className="block mb-2">
             <Label htmlFor="password">Password</Label>
           </div>
           <div className="relative">
@@ -94,13 +97,13 @@ const SignupForm = () => {
             {showPassword ? (
               <IoEye
                 size={23}
-                className="absolute right-0 top-0 h-full cursor-pointer mr-4"
+                className="absolute top-0 right-0 h-full mr-4 cursor-pointer"
                 onClick={() => setShowPassword((prev) => !prev)}
               />
             ) : (
               <IoEyeOff
                 size={23}
-                className="absolute right-0 top-0 h-full cursor-pointer mr-4"
+                className="absolute top-0 right-0 h-full mr-4 cursor-pointer"
                 onClick={() => setShowPassword((prev) => !prev)}
               />
             )}
@@ -124,7 +127,7 @@ const SignupForm = () => {
         </Button>
       </form>
 
-      <div className="text-center pt-5">
+      <div className="pt-5 text-center">
         <span>You already have an account?</span>
         <Link to="/login" className="ml-2 text-cyan-800 hover:underline">
           Login
