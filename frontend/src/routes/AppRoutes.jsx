@@ -5,6 +5,7 @@ import EmailVerificationInfoPage from "../pages/auth/EmailVerificationInfoPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import LoginPage from "../pages/auth/LoginPage";
 import ProtectedRoute from "./ProtectedRoute";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
   },
 ]);
 
